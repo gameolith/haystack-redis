@@ -2,7 +2,7 @@ import os
 from cStringIO import StringIO
 from threading import Lock
 
-from redis import from_url as redis
+import redis
 
 from whoosh.index import _DEF_INDEX_NAME, EmptyIndexError
 from whoosh.qparser import QueryParser
@@ -10,8 +10,6 @@ from whoosh.filedb.structfile import StructFile
 from whoosh.filedb.filestore import Storage, create_index, open_index
 
 from haystack.backends.whoosh_backend import WhooshSearchBackend, WhooshEngine
-
-redis_url = os.environ.get('REDISTOGO_URL', 'redis://localhost:6379')
 
 
 class RedisSearchBackend(WhooshSearchBackend):
@@ -49,7 +47,7 @@ class RedisStorage(Storage):
 
     def __init__(self, namespace='whoosh'):
         self.folder = namespace
-        self.redis = redis(redis_url)
+        self.redis = redis.StrictRedis(host='localhost', port=6379, db=8)
         self.locks = {}
 
     def create_index(self, schema, indexname=_DEF_INDEX_NAME):
